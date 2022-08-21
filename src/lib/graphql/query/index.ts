@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export const GET_USER_ALL_TODOS = gql`
-  query {
+  query retrieveAllTodos {
     retrieveAllTodos(uid: "f7103b59-8b45-4650-b699-7817b8cce23b") {
       id
       content
@@ -53,6 +53,17 @@ export const GET_USER_ALL_REMOVED_TODOS = gql`
       createdDt
       updatedDt
       removedDt
+    }
+  }
+`;
+
+export const GET_USER = gql`
+  query retrieveUserById($data: FindUserInput!) {
+    retrieveUserById(data: $data) {
+      id
+      email
+      name
+      snsType
     }
   }
 `;

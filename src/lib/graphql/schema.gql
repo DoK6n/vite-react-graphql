@@ -1,0 +1,80 @@
+type SnsType {
+  id: Int!
+  name: String!
+}
+
+type User {
+  id: String!
+  email: String!
+  name: String!
+  snsTypeId: Float!
+}
+
+type UserWithSnsType {
+  id: String!
+  email: String!
+  name: String!
+  snsTypeId: Float!
+  snsType: String!
+}
+
+type Todo {
+  id: String!
+  content: JSON
+  isInactive: Boolean!
+  isRemoved: Boolean!
+  userId: String!
+  createdDt: DateTime!
+  updatedDt: DateTime
+  removedDt: DateTime
+  user: User!
+}
+
+# The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+scalar JSON
+
+# A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+scalar DateTime
+
+type Query {
+  retrieveAllTodos(uid: String!): [Todo!]
+  retrieveTodo(id: String!, uid: String!): Todo
+  retrieveRemovedTodo(id: String!, uid: String!): Todo
+  retrieveAllRemovedTodo(uid: String!): [Todo!]
+  retrieveAllUsers: [User!]
+  retrieveUserById(data: FindUserInput!): UserWithSnsType!
+  snsType(name: String!): SnsType!
+}
+
+input FindUserInput {
+  id: String
+}
+
+type Mutation {
+  addNewTodo(data: CreateTodoInput!): Todo
+  editTodoContent(data: UpdateTodoContentInput!): Todo
+  removeTodo(id: String!, uid: String!): Todo
+  recycleRemovedTodo(id: String!, uid: String!): Todo
+  deleteRemovedTodo(id: String!, uid: String!): Todo
+  deleteAllRemovedTodos(uid: String!): [Todo!]
+  addUser(data: CreateUserInput!): User!
+}
+
+input CreateTodoInput {
+  uid: String!
+  content: JSON
+}
+
+input UpdateTodoContentInput {
+  id: String!
+  uid: String!
+  content: JSON
+}
+
+input CreateUserInput {
+  id: String!
+  email: String!
+  name: String!
+  snsTypeName: String!
+  createDt: DateTime!
+}
