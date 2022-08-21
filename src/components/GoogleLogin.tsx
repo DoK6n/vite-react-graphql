@@ -29,16 +29,9 @@ interface GoogleLoginProps {
 export default function GoogleLogin({ setLogin }: GoogleLoginProps) {
   const provider = new GoogleAuthProvider();
 
-  const [uid, setUid] = useState<string | null>(null);
   const { currentUserInfo, userLogin, updateMode, mode, userLogout } = useAuthStore();
-  const [addUser, { loading, error }] = useMutation(CREATE_USER);
-  const [retrieveUserById, { data }] = useLazyQuery(GET_USER, {
-    context: {
-      headers: {
-        uid: uid
-      }
-    }
-  });
+  const [addUser] = useMutation(CREATE_USER);
+  const [retrieveUserById] = useLazyQuery(GET_USER);
 
   const signInWithGoogle = () => {
     signInWithPopup(auth, provider) // 구글 로그인 팝업창
@@ -51,25 +44,11 @@ export default function GoogleLogin({ setLogin }: GoogleLoginProps) {
 
         // The signed-in user info.
         const user = result.user;
-        // login
-        updateMode(authMode.LOGIN_MODE);
-        console.log('mode: ' + mode);
-        // add user info
-        userLogin({
-          uid: user.uid,
-          displayName: user.displayName,
-          email: user.email,
-          photoURL: user.photoURL,
-          providerId: user.providerData[0].providerId,
-          lastLoginAt: datjs(user.metadata.lastSignInTime).format('YYYY-MM-DD HH:mm:ss')
-        });
-        console.log('current login user data: ');
-        console.log(currentUserInfo);
 
         retrieveUserById({
-          variables: {
-            data: {
-              id: user.uid
+          context: {
+            headers: {
+              uid: user.uid
             }
           }
         })
@@ -79,29 +58,53 @@ export default function GoogleLogin({ setLogin }: GoogleLoginProps) {
               if (data && data.retrieveUserById) {
                 console.log('Login code here ');
                 console.log('(then)data:', data);
+                // add user info
+                userLogin({
+                  uid: user.uid,
+                  displayName: user.displayName,
+                  email: user.email,
+                  photoURL: user.photoURL,
+                  providerId: user.providerData[0].providerId,
+                  lastLoginAt: datjs(user.metadata.lastSignInTime).format('YYYY-MM-DD HH:mm:ss')
+                });
               } else {
                 console.log('Register code here');
-                console.log('(then)data:', data);
                 const createDt = datjs(user.metadata.creationTime).format('YYYY-MM-DD HH:mm:ss');
                 addUser({
                   variables: {
                     data: {
-                      id: user.uid,
                       email: user.email,
                       name: user.displayName,
                       snsTypeName: user.providerData[0].providerId,
                       createDt: createDt
                     }
+                  },
+                  context: {
+                    headers: {
+                      uid: user.uid
+                    }
                   }
+                }).then(() => {
+                  // add user info
+                  userLogin({
+                    uid: user.uid,
+                    displayName: user.displayName,
+                    email: user.email,
+                    photoURL: user.photoURL,
+                    providerId: user.providerData[0].providerId,
+                    lastLoginAt: datjs(user.metadata.lastSignInTime).format('YYYY-MM-DD HH:mm:ss')
+                  });
                 });
               }
             }
+            // login
+            updateMode(authMode.LOGIN_MODE);
           })
           .catch(error => {
             console.error({ code: error.code, message: error.message });
           });
 
-        setLogin(user);
+        // setLogin(user);
       })
       .catch(error => {
         // Handle Errors here.
@@ -143,8 +146,7 @@ export default function GoogleLogin({ setLogin }: GoogleLoginProps) {
     signOut(auth)
       .then(() => {
         // Sign-out successful.
-        setLogin(null);
-        setUid(null);
+        // setLogin(null);
         userLogout();
       })
       .catch(error => {

@@ -54,7 +54,6 @@ function App() {
           addUser({
             variables: {
               data: {
-                id: uuid,
                 email: uuid.split('-')[1] + '@gmail.com',
                 name: 'test' + uuid.split('-')[1],
                 snsTypeName: 'google.com',

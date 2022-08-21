@@ -58,8 +58,8 @@ export const GET_USER_ALL_REMOVED_TODOS = gql`
 `;
 
 export const GET_USER = gql`
-  query retrieveUserById($data: FindUserInput!) {
-    retrieveUserById(data: $data) {
+  query {
+    retrieveUserById {
       id
       email
       name
