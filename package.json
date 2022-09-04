@@ -11,12 +11,12 @@
   "dependencies": {
     "@apollo/client": "^3.6.9",
     "@firebase/auth": "^0.20.5",
-    "D": "^1.0.0",
     "dayjs": "^1.11.5",
     "firebase": "^9.9.2",
     "graphql": "^16.5.0",
     "graphql-tag": "^2.12.6",
     "immer": "^9.0.15",
+    "nanoid": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "uuid": "^8.3.2",
