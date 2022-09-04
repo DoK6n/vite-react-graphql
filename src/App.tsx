@@ -5,6 +5,7 @@ import { ITodo } from './interfaces/todo';
 import Todo from './components/Todo';
 import { GET_USER_ALL_TODOS } from './lib/graphql/query';
 import { v4 as uuidv4 } from 'uuid';
+import { nanoid } from 'nanoid';
 
 import GoogleLogin from './components/GoogleLogin';
 import { getAuth, User } from 'firebase/auth';
@@ -15,7 +16,8 @@ function App() {
   const [todos, setTodos] = useState<ITodo[]>([]);
   const [load, setLoad] = useState<boolean>(true);
   const { currentUserInfo, userLogin, mode } = useAuthStore();
-  const userDisplayname = currentUserInfo?.displayName !== null ? currentUserInfo?.displayName : currentUserInfo.email;
+  const userDisplayname =
+    currentUserInfo?.displayName !== null ? currentUserInfo?.displayName : currentUserInfo.email;
 
   const [retrieveAllTodos, { loading, data, refetch }] = useLazyQuery(GET_USER_ALL_TODOS);
   const [addUser] = useMutation(CREATE_USER);
@@ -27,12 +29,17 @@ function App() {
     setLogin(auth.currentUser);
   }, [login]);
 
-  const getData = () => {
-    retrieveAllTodos().then(({ data }) => {
-      if (data && data.retrieveAllTodos) {
-        setTodos(data.retrieveAllTodos);
-      }
+  const getData = async () => {
+    const { data } = await retrieveAllTodos({
+      context: {
+        headers: {
+          uid: currentUserInfo?.uid,
+        },
+      },
+      // fetchPolicy: 'no-cache',
     });
+    if (!data || !data.retrieveAllTodos) return;
+    setTodos(data.retrieveAllTodos);
   };
 
   useEffect(() => {
@@ -48,23 +55,24 @@ function App() {
       </div>
       <h1>Vite + React + graphql + firebase auth google</h1>
       <button
-        onClick={() => {
-          const uuid = uuidv4();
-          console.log(uuid);
-          addUser({
+        onClick={async () => {
+          const newUid = nanoid(28);
+          console.log('new nanoid: ' + newUid);
+
+          await addUser({
             variables: {
               data: {
-                email: uuid.split('-')[1] + '@gmail.com',
-                name: 'test' + uuid.split('-')[1],
+                email: newUid.substring(0, 4) + '@gmail.com',
+                name: 'test' + newUid.substring(0, 4),
                 snsTypeName: 'google.com',
-                createDt: '2022-08-16 10:00:00'
-              }
+                createDt: '2022-08-22 16:00:00',
+              },
             },
             context: {
               headers: {
-                uid: uuid
-              }
-            }
+                uid: newUid,
+              },
+            },
           });
         }}>
         user table data insert test
@@ -74,7 +82,9 @@ function App() {
       <div className='card'>
         <button onClick={getData}>fetch</button>
       </div>
-      <div className='card'>{todos.map((todo, i) => (load === false ? <Todo {...todo} key={i} /> : null))}</div>
+      <div className='card'>
+        {todos.map((todo, i) => (load === false ? <Todo {...todo} key={i} /> : null))}
+      </div>
     </div>
   );
 }

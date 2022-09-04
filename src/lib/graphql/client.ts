@@ -1,4 +1,11 @@
-import { ApolloProvider, ApolloClient, InMemoryCache, HttpLink, ApolloLink, concat } from '@apollo/client';
+import {
+  ApolloProvider,
+  ApolloClient,
+  InMemoryCache,
+  HttpLink,
+  ApolloLink,
+  concat,
+} from '@apollo/client';
 
 const httpLink = new HttpLink({ uri: 'http://localhost:3001/graphql' });
 const authMiddleware = new ApolloLink((operation, forward) => {
@@ -6,9 +13,9 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 
   operation.setContext(({ headers = {} }) => ({
     headers: {
-      ...headers
+      ...headers,
       // uid: window.localStorage.getItem('CurrentUser') || null
-    }
+    },
   }));
 
   return forward(operation);
@@ -17,5 +24,5 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 export const client = new ApolloClient({
   uri: 'http://localhost:3001/graphql',
   cache: new InMemoryCache(),
-  link: concat(authMiddleware, httpLink)
+  link: concat(authMiddleware, httpLink),
 });

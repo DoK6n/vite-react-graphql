@@ -1,8 +1,15 @@
 import gql from 'graphql-tag';
 
+/**
+ * ### 특정 유저의 모든 할일 목록 조회
+ * ```graphql
+ * retrieveAllTodos: [Todo!]
+ * ```
+ * @headers uid
+ */
 export const GET_USER_ALL_TODOS = gql`
-  query retrieveAllTodos {
-    retrieveAllTodos(uid: "f7103b59-8b45-4650-b699-7817b8cce23b") {
+  query {
+    retrieveAllTodos {
       id
       content
       isInactive
@@ -15,9 +22,16 @@ export const GET_USER_ALL_TODOS = gql`
   }
 `;
 
+/**
+ * ### 특정 유저의 할일 단일항목 조회
+ * ```graphql
+ * retrieveTodo(id: String!): Todo
+ * ```
+ * @headers uid
+ */
 export const GET_USER_TODO = gql`
-  query {
-    retrieveTodo(id: "fe1b1c10-060c-4860-aaf0-048905e59b7c", uid: "f7103b59-8b45-4650-b699-7817b8cce23b") {
+  query retrieveTodo($id: String!) {
+    retrieveTodo(id: $id) {
       content
       isInactive
       isRemoved
@@ -28,9 +42,16 @@ export const GET_USER_TODO = gql`
   }
 `;
 
-export const GET_USER_REMOVED_TODO = gql`
+/**
+ * ### 특정 유저의 휴지통 목록 조회
+ * ```graphql
+ * retrieveAllRemovedTodo: [Todo!]
+ * ```
+ * @headers uid
+ */
+export const GET_USER_ALL_REMOVED_TODOS = gql`
   query {
-    retrieveAllRemovedTodo(uid: "f7103b59-8b45-4650-b699-7817b8cce23b") {
+    retrieveAllRemovedTodo {
       id
       userId
       content
@@ -43,9 +64,16 @@ export const GET_USER_REMOVED_TODO = gql`
   }
 `;
 
-export const GET_USER_ALL_REMOVED_TODOS = gql`
-  query {
-    retrieveRemovedTodo(id: "9cd64bfe-eb57-483a-a9c1-5df3b48d8d70", uid: "f7103b59-8b45-4650-b699-7817b8cce23b") {
+/**
+ * ### 특정 유저의 휴지통에 삭제된 할일 단일항목 조회
+ * ```graphql
+ * retrieveRemovedTodo(id: String!): Todo
+ * ```
+ * @headers uid
+ */
+export const GET_USER_REMOVED_TODO = gql`
+  query retrieveRemovedTodo($id: String!) {
+    retrieveRemovedTodo(id: $id) {
       userId
       content
       isInactive
@@ -57,6 +85,13 @@ export const GET_USER_ALL_REMOVED_TODOS = gql`
   }
 `;
 
+/**
+ * ### 특정 유저 단일 조회
+ * ```graphql
+ * retrieveUserById: UserWithSnsType
+ * ```
+ * @headers uid
+ */
 export const GET_USER = gql`
   query {
     retrieveUserById {
