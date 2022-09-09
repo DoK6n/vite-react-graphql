@@ -32,8 +32,14 @@
   }
 }
 
-.card {
+.cardWrapper {
   padding: 2em;
+  display: flex;
+  flex-direction: column;
+}
+
+.card {
+  border: 1px solid slategray;
 }
 
 .read-the-docs {

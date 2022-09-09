@@ -1,14 +1,4 @@
-import gql from 'graphql-tag';
-
-// type Mutation {
-//   addNewTodo(data: CreateTodoInput!): Todo
-//   editTodoContent(data: UpdateTodoContentInput!): Todo
-//   removeTodo(id: String!): Todo
-//   recycleRemovedTodo(id: String!): Todo
-//   deleteRemovedTodo(id: String!): Todo
-//   deleteAllRemovedTodos: [Todo!]
-//   addUser(data: CreateUserInput!): User!
-// }
+import { gql } from '@apollo/client';
 
 /**
  * ### 테스트용 유저 생성
@@ -17,7 +7,7 @@ import gql from 'graphql-tag';
  * ```
  */
 export const CREATE_TEST_USER = gql`
-  mutation {
+  mutation addUser {
     addUser(
       data: {
         email: "test@test.com"
@@ -56,6 +46,7 @@ export const CREATE_USER = gql`
  * ```graphql
  * input CreateTodoInput {
  *  content: JSON
+ *  orderKey: number
  * }
  * addNewTodo(data: CreateTodoInput!): Todo
  * ```
@@ -72,7 +63,7 @@ export const ADD_NEW_TODO = gql`
       createdDt
       updatedDt
       removedDt
-      isInactive
+      done
       isRemoved
     }
   }
@@ -81,7 +72,7 @@ export const ADD_NEW_TODO = gql`
 /**
  * ### 특정 유저의 할일 수정
  * ```graphql
- * removeTodo(id: String!): Todo
+ * editTodoContent(data: UpdateTodoContentInput!): Todo
  * ```
  * @headers uid
  */
@@ -89,11 +80,27 @@ export const EDIT_TODO_CONTENT = gql`
   mutation editTodoContent($data: UpdateTodoContentInput!) {
     editTodoContent(data: $data) {
       content
-      isInactive
+      done
       isRemoved
-      # createdDt,
       updatedDt
-      # removedDt
+    }
+  }
+`;
+
+/**
+ * ### 특정 유저의 할일 완료 여부 수정
+ * ```graphql
+ * editTodoDone(data: UpdateTodoDoneInput!): Todo
+ * ```
+ * @headers uid
+ */
+export const EDIT_TODO_DONE = gql`
+  mutation editTodoDone($data: UpdateTodoDoneInput!) {
+    editTodoDone(data: $data) {
+      content
+      done
+      isRemoved
+      updatedDt
     }
   }
 `;
@@ -110,7 +117,7 @@ export const REMOVE_TODO = gql`
     removeTodo(id: $id) {
       userId
       content
-      isInactive
+      done
       isRemoved
       createdDt
       updatedDt
