@@ -92,7 +92,7 @@ export default function Todo({ todo, orderKey }: TodoProps) {
     <div className='card'>
       <button onClick={onEditText}>{isKor ? '한글' : '영어'}</button>
       <button onClick={onTodoDone}>done</button>
-      <button style={{ textAlign: 'left' }}>
+      <button style={{ textAlign: 'left', color: todo.done ? 'GrayText' : 'white' }}>
         <div>{todo.id.slice(0, 8)}</div>
         <div>index : {orderKey}</div>
         <div>orderKey : {todo.orderKey}</div>
