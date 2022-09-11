@@ -1,4 +1,4 @@
-import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
+import { useApolloClient, useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import {
   getAuth,
   signInWithPopup,
@@ -26,6 +26,8 @@ interface GoogleLoginProps {
 }
 
 export default function GoogleLogin({ setLogin }: GoogleLoginProps) {
+  const client = useApolloClient();
+
   const { currentUserInfo, userLogin, updateMode, mode, userLogout } = useAuthStore();
   const [addUser] = useMutation(CREATE_USER);
   const [retrieveUserById] = useLazyQuery(GET_USER);
@@ -172,9 +174,11 @@ export default function GoogleLogin({ setLogin }: GoogleLoginProps) {
 
   const signOutWithGoogle = async () => {
     const auth = getAuth();
+
     try {
       await signOut(auth);
       userLogout();
+      await client.resetStore();
     } catch (error) {
       console.error(error);
     }
