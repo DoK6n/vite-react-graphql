@@ -108,13 +108,13 @@ export const EDIT_TODO_DONE = gql`
 /**
  * ### 특정 유저의 할일 제거 _(휴지통)_
  * ```graphql
- * editTodoContent(data: UpdateTodoContentInput!): Todo
+ * removeTodo($data: { id: String! }): Todo
  * ```
  * @headers uid
  */
 export const REMOVE_TODO = gql`
-  mutation removeTodo($data: String!) {
-    removeTodo(id: $id) {
+  mutation removeTodo($data: TodoIdInput!) {
+    removeTodo(data: $data) {
       userId
       content
       done
@@ -132,7 +132,19 @@ export const REMOVE_TODO = gql`
  * recycleRemovedTodo(id: String!): Todo
  * ```
  */
-// export const RECYCLE_REMOVED_TODO = gql``;
+export const RECYCLE_REMOVED_TODO = gql`
+  mutation recycleRemovedTodo($data: TodoIdInput!) {
+    recycleRemovedTodo(data: $data) {
+      userId
+      content
+      done
+      isRemoved
+      createdDt
+      updatedDt
+      removedDt
+    }
+  }
+`;
 
 /**
  * ### 휴지통에서 할일 단일항목 영구삭제
@@ -140,7 +152,17 @@ export const REMOVE_TODO = gql`
  * deleteRemovedTodo(id: String!): Todo
  * ```
  */
-// export const DELETE_REMOVED_TODO = gql``;
+export const DELETE_REMOVED_TODO = gql`
+  mutation deleteRemovedTodo($data: TodoIdInput!) {
+    deleteRemovedTodo(data: $data) {
+      content
+      isRemoved
+      createdDt
+      updatedDt
+      removedDt
+    }
+  }
+`;
 
 /**
  * ### 휴지통 비우기

@@ -1,9 +1,14 @@
 import { ITodo } from '../interfaces/todo';
 import dayjs from 'dayjs';
 import { useMutation } from '@apollo/client';
-import { EDIT_TODO_CONTENT, EDIT_TODO_DONE } from '../lib/graphql/mutation';
+import {
+  EDIT_TODO_CONTENT,
+  EDIT_TODO_DONE,
+  RECYCLE_REMOVED_TODO,
+  REMOVE_TODO,
+} from '../lib/graphql/mutation';
 import { useAuthStore } from '../lib/stores/useAuthStore';
-import { GET_USER_ALL_TODOS } from '../lib/graphql/query';
+import { GET_USER_ALL_REMOVED_TODOS, GET_USER_ALL_TODOS } from '../lib/graphql/query';
 import { ButtonHTMLAttributes, MouseEventHandler, useRef, useState } from 'react';
 import { BsToggleOff, BsToggleOn } from 'react-icons/bs';
 interface TodoProps {
@@ -15,6 +20,7 @@ export default function Todo({ todo, orderKey }: TodoProps) {
   const [isKor, setIsKor] = useState<boolean>(true);
   const [editTodoContent] = useMutation(EDIT_TODO_CONTENT);
   const [editTodoDone] = useMutation(EDIT_TODO_DONE);
+  const [removeTodo] = useMutation(REMOVE_TODO);
   const { currentUserInfo } = useAuthStore();
 
   const onEditText: MouseEventHandler<HTMLButtonElement> = async () => {
@@ -88,9 +94,43 @@ export default function Todo({ todo, orderKey }: TodoProps) {
     });
   };
 
+  const onRemoveTodo: MouseEventHandler<HTMLButtonElement> = async () => {
+    await removeTodo({
+      variables: {
+        data: {
+          id: todo.id,
+        },
+      },
+      context: {
+        headers: {
+          uid: currentUserInfo?.uid,
+        },
+      },
+      refetchQueries: [
+        {
+          query: GET_USER_ALL_TODOS,
+          context: {
+            headers: {
+              uid: currentUserInfo?.uid,
+            },
+          },
+        },
+        {
+          query: GET_USER_ALL_REMOVED_TODOS,
+          context: {
+            headers: {
+              uid: currentUserInfo?.uid,
+            },
+          },
+        },
+      ],
+    });
+  };
+
   return (
     <div className='card'>
       <button onClick={onEditText}>{isKor ? '한글' : '영어'}</button>
+      <button onClick={onRemoveTodo}>삭제</button>
       <button onClick={onTodoDone}>done</button>
       <button style={{ textAlign: 'left', color: todo.done ? 'GrayText' : 'white' }}>
         <div>{todo.id.slice(0, 8)}</div>

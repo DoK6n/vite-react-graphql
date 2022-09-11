@@ -60,7 +60,6 @@ export const GET_USER_ALL_REMOVED_TODOS = gql`
       done
       isRemoved
       createdDt
-      # updatedDt,
       removedDt
       orderKey
     }

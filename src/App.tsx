@@ -14,6 +14,7 @@ import { useAuthStore } from './lib/stores/useAuthStore';
 import TodoList from './components/TodoList';
 
 import produce from 'immer';
+import TrashBin from './components/TrashBin';
 
 const newContent = {
   type: 'doc',
@@ -59,11 +60,6 @@ function App() {
       },
     },
   });
-
-  useEffect(() => {
-    // setTodos(data);
-    console.log(data);
-  }, [data]);
 
   // 테스트 계정 생성
   const onCreateUserHandler = async () => {
@@ -154,6 +150,9 @@ function App() {
           ? data.retrieveAllTodos.map((todo, i) => <Todo todo={todo} orderKey={i} key={i} />)
           : null}
       </TodoList>
+      <hr />
+      <h1>휴지통</h1>
+      <TrashBin />
     </div>
   );
 }
