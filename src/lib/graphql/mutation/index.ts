@@ -170,4 +170,10 @@ export const DELETE_REMOVED_TODO = gql`
  * deleteAllRemovedTodos: [Todo!]
  * ```
  */
-// export const DELETE_ALL_REMOVED_TODOS = gql``;
+export const DELETE_ALL_REMOVED_TODOS = gql`
+  mutation deleteAllRemovedTodos {
+    deleteAllRemovedTodos {
+      id
+    }
+  }
+`;

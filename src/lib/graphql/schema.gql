@@ -61,7 +61,7 @@ type Mutation {
   editTodoDone(data: UpdateTodoDoneInput!): Todo
   removeTodo(data: TodoIdInput!): Todo
   recycleRemovedTodo(data: TodoIdInput!): Todo
-  deleteRemovedTodo(data: TodoIdInput!): Todo
+  deleteRemovedTodo(data: TodoIdInput!): [Todo!]
   deleteAllRemovedTodos: [Todo!]
   addUser(data: CreateUserInput!): User!
 }
